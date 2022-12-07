@@ -5,11 +5,14 @@ class ReadSummary(var xml_url: String) {
 
   val xml = XML.loadFile(xml_url)
   val temp = (xml \\ "summary" \\ "methods " \ "method")
+  val className = xml_url.substring(xml_url.lastIndexOf('/')+1, xml_url.lastIndexOf('.'))
 
   def getMethods(): List[MethodSummary] = {
     var methods = new ListBuffer[MethodSummary]()
     (xml \\ "summary" \\ "methods" \\ "method" \\ "@id").foreach(method => {
-      println(method.toString())
+      var methodSummary = new MethodSummary(className)
+      stringToMethodInfo(method.toString(), methodSummary)
+      methods.append(methodSummary)
     })
     methods.toList
   }
@@ -18,7 +21,14 @@ class ReadSummary(var xml_url: String) {
     val tokens = str_id.split(" ")
     methodSummary.returnType = tokens(0)
     val methodDescription = tokens(1)
-    methodSummary.methodName = methodDescription
+    val parameters_as_string = methodDescription.substring(methodDescription.lastIndexOf('(') + 1, methodDescription.lastIndexOf(')'))
+    if (parameters_as_string.isEmpty)
+      methodSummary.parametersLength = 0
+    else {
+      //methodSummary.methodParameters = parameters_as_string.split(',')
+      methodSummary.methodParameters = parameters_as_string
+      methodSummary.parametersLength = parameters_as_string.split(',').length
+    }
   }
 
 
