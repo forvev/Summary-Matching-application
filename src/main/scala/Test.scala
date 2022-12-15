@@ -19,23 +19,27 @@ object Test {
   def checkMethod(methods_of_summary: List[MethodSummary]) : Unit = {
     project.allMethodsWithBody.foreach(method => {
       val parameterLength = method.parameterTypes.length
+
       val signature = method.signature.toJava
       var parameters = signature.substring(signature.lastIndexOf("(")+1, signature.lastIndexOf(")"))
       if(parameters == "")
         parameters="null"
       val returnType = method.returnType.toJava
       result = returnType + " " + parameterLength + " " + parameters
-      if (methods_of_summary.exists(p => p.toResult().equals(result)))
+      if (methods_of_summary.exists(p => p.toResult().equals(result))) {
         println("find match: " + method.name)
+        println("Of: "+result)
+      }
     })
+    //project.allProjectClassFiles.foreach()
   }
 
   def main(args: Array[String]): Unit = {
     val readSummary = new ReadSummary(xml_url)
     val methods = readSummary.getMethods()
-    for (elem <- methods) {
-      println(elem.toResult())
-    }
+//    for (elem <- methods) {
+//      println("dd"+elem.toResult())
+//    }
     checkMethod(methods)
   }
 
