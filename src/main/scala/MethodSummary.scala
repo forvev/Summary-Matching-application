@@ -1,6 +1,6 @@
 
 
-class MethodSummary(var className: String) {
+class MethodSummary() {
   var methodName: String = _
   var methodParameters: String = _
   var parametersLength: Int = _

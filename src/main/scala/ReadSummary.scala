@@ -7,14 +7,16 @@ class ReadSummary(var xml_url: String) {
   val temp = (xml \\ "summary" \\ "methods " \ "method")
   val className = xml_url.substring(xml_url.lastIndexOf('/')+1, xml_url.lastIndexOf('.'))
 
-  def getMethods(): List[MethodSummary] = {
+  def getClassSummary(): ClassSummary = {
     var methods = new ListBuffer[MethodSummary]()
+    var result = new ClassSummary(className)
     (xml \\ "summary" \\ "methods" \\ "method" \\ "@id").foreach(method => {
-      var methodSummary = new MethodSummary(className)
+      var methodSummary = new MethodSummary()
       stringToMethodInfo(method.toString(), methodSummary)
       methods.append(methodSummary)
     })
-    methods.toList
+    result.setMethods(methods.toList)
+    result
   }
 
   private def stringToMethodInfo(str_id: String, methodSummary: MethodSummary) : Unit = {
