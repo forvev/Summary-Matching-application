@@ -3,15 +3,15 @@ import org.opalj.ai.domain.l1.DefaultDomainWithCFGAndDefUse
 import org.opalj.br.analyses.Project
 import org.opalj.br.instructions._
 import org.opalj.br._
+import java.nio.file.{FileSystems, Files}
 
 import scala.xml.XML
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
-import scala.xml.NodeSeq.seqToNodeSeq
 
 object Test {
-  val xml_url = "./src/main/xml-files/PatternMatcher.xml"
+  val xml_urls_path = "./src/main/xml-files"
   val projectJAR2 = "./src/main/jar-files/STD_app2.jar"
   val project = Project(new File(projectJAR2))
   //hashmap for dependencies
@@ -49,6 +49,9 @@ object Test {
 
   def getCalledClasses(specific_class: ClassFile) : mutable.LinkedHashSet[String] = {
     var result = new mutable.LinkedHashSet[String]()
+    specific_class.fields.foreach(field => {
+      result.add(field.fieldType.toJava)
+    })
     specific_class.methodBodies.foreach(code => {
       code.instructions.foreach {
         case loadClass: LoadClass =>
@@ -69,14 +72,24 @@ object Test {
     result
   }
 
+  def checkRelationOfSummary(): Unit = {
+    classWithMatchSummary.keys.foreach(key =>{
+      classWithDependencies.foreach((className, dependencies) =>{
+        if (!key.equals(className))
+          return
+          // we need to go through all dependencies and check if one depedency has the same name with key
+      })
+    })
+  }
 
 
   def main(args: Array[String]): Unit = {
-    val readSummary = new ReadSummary(xml_url)
-    val classSummary = readSummary.getClassSummary()
-
-
-    checkMatchSummary(classSummary)
+    val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
+    Files.list(xml_urls_dir).toList.forEach(path => {
+      val readSummary = new ReadSummary(path.toString)
+      val classSummary = readSummary.getClassSummary()
+      checkMatchSummary(classSummary)
+    })
 
     val searchForDependencies = new SearchForDependencies(classWithDependencies)
   }
