@@ -15,7 +15,7 @@ object Test {
   val projectJAR2 = "./src/main/jar-files/STD_app2.jar"
   val project = Project(new File(projectJAR2))
   //hashmap for dependencies
-  var classWithDependencies : mutable.Map[String, mutable.LinkedHashSet[String]] = mutable.HashMap()
+  var classWithDependencies : mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
   var classWithMatchSummary: mutable.Map[String, String] = mutable.HashMap()
 
   def checkMatchSummary(classSummary: ClassSummary) : Unit = {
@@ -41,15 +41,16 @@ object Test {
       if(real_number_of_method==number_of_method){
         println("Pattern has been found!\nWith class: "+specific_class.methods)
         //we need to store information about existing summaries for future use(we will use this list of class to check dependencies)
-        classWithDependencies += (specific_class.fqn -> getCalledClasses(specific_class))
-        classWithMatchSummary += (specific_class.fqn -> classSummary.className)
+        classWithDependencies += (specific_class.fqn.replace("/", ".") -> getCalledClasses(specific_class))
+        classWithMatchSummary += (specific_class.fqn.replace("/", ".") -> classSummary.className)
       }
     })
   }
 
-  def getCalledClasses(specific_class: ClassFile) : mutable.LinkedHashSet[String] = {
-    var result = new mutable.LinkedHashSet[String]()
+  def getCalledClasses(specific_class: ClassFile) : mutable.HashSet[String] = {
+    var result = new mutable.HashSet[String]()
     specific_class.fields.foreach(field => {
+      // filter java native type
       result.add(field.fieldType.toJava)
     })
     specific_class.methodBodies.foreach(code => {
@@ -74,11 +75,16 @@ object Test {
 
   def checkRelationOfSummary(): Unit = {
     println("----------------------------------------------")
-    classWithMatchSummary.keys.foreach(key =>{
-      classWithDependencies.foreach((dependencies) =>{
+    classWithMatchSummary.keys.foreach(summary =>{
+      classWithDependencies.foreach(dependencies =>{
         //("key: "+key+" dep: "+dependencies._1)
-        if (!key.equals(dependencies._1)){
-          println("I've found the dependencies between:\n"+key+"\nand\n"+dependencies._1)
+        if (!summary.equals(dependencies._1)){
+          dependencies._2.foreach(className => {
+            if (className.equals(summary)){
+              println("class " + dependencies._1 + " calls the class " + summary)
+            }
+          })
+            //println("I've found the dependencies between:\n"+key+"\nand\n"+dependencies._1)
         }
       })
     })
