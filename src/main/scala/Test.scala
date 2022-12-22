@@ -73,11 +73,13 @@ object Test {
   }
 
   def checkRelationOfSummary(): Unit = {
+    println("----------------------------------------------")
     classWithMatchSummary.keys.foreach(key =>{
-      classWithDependencies.foreach((className, dependencies) =>{
-        if (!key.equals(className))
-          return
-          // we need to go through all dependencies and check if one depedency has the same name with key
+      classWithDependencies.foreach((dependencies) =>{
+        //("key: "+key+" dep: "+dependencies._1)
+        if (!key.equals(dependencies._1)){
+          println("I've found the dependencies between:\n"+key+"\nand\n"+dependencies._1)
+        }
       })
     })
   }
@@ -90,7 +92,7 @@ object Test {
       val classSummary = readSummary.getClassSummary()
       checkMatchSummary(classSummary)
     })
-
+    checkRelationOfSummary()
     val searchForDependencies = new SearchForDependencies(classWithDependencies)
   }
 
