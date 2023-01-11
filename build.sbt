@@ -17,3 +17,5 @@ libraryDependencies += "de.opal-project" % "abstract-interpretation-framework_2.
 libraryDependencies += "de.opal-project" % "three-address-code_2.12" % "4.0.0"
 libraryDependencies += "de.opal-project" % "architecture-validation_2.12" % "4.0.0"
 libraryDependencies += "com.databricks" %% "spark-xml" % "0.15.0"
+//for scala test - flatSpec
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
