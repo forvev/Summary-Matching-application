@@ -4,14 +4,18 @@ import org.scalatest._
 
 class ExampleSpec extends AnyFlatSpec {
 //With this input I expect this output...
+  val xml_urls_path = "./src/main/xml-files"
+  val projectJAR2 = "./src/main/jar-files/STD_app2.jar"
+  val object_to_test = new SearchForDependencies(xml_urls_path = xml_urls_path, jar_path = projectJAR2)
+  object_to_test.execute
   "Class with dependencies" can "have size more than 0" in {
-    assert(Test.classWithDependencies.empty != 0)
+    assert(object_to_test.classWithDependencies.empty != 0)
   }
 
   //assert(Test.projectJAR2 == "./src/main/jar-files/STD_app2.jar")
 
   "class with match summary" can "have size more than 0" in {
-    assert(Test.classWithMatchSummary.empty != 0)
+    assert(object_to_test.classWithMatchSummary.empty != 0)
   }
 
   "inside classWithMatchSummary" must "class ... must be included" in {
@@ -20,14 +24,14 @@ class ExampleSpec extends AnyFlatSpec {
     //val containsName = classWithMatchSummary.contains("my_class")
     //assert(containsName == true, "my_class is not found")
     //TODO: ask if there is a way to test variables which are not assigned at the beginning
-    print(Test.classWithDependencies)
-    val containsName = Test.classWithMatchSummary.contains("com/example/std_app/TestClassSummary")
+    print(object_to_test.classWithDependencies)
+    val containsName = object_to_test.classWithMatchSummary.contains("com/example/std_app/TestClassSummary")
     assert(containsName == false,"my_class is not found")
   }
 
 //  it should "produce NoSuchElementException when head is invoked" in {
 //    assertThrows[NoSuchElementException] {
-//      Test.classWithDependencies.empty.head
+//      object_to_test.classWithDependencies.empty.head
 //    }
 //  }
 
