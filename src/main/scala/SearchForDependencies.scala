@@ -5,7 +5,6 @@ import org.opalj.br.instructions._
 import org.opalj.br._
 import java.nio.file.{FileSystems, Files}
 
-import scala.xml.XML
 import java.io.File
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -59,26 +58,33 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     var result = new mutable.HashSet[String]()
     specific_class.fields.foreach(field => {
       // filter java native type
-      result.add(field.fieldType.toJava)
+      checkDependencies(result, field.fieldType.toJava)
     })
     specific_class.methodBodies.foreach(code => {
       code.instructions.foreach {
         case loadClass: LoadClass =>
-          result.add(loadClass.value.toJava)
+          checkDependencies(result, loadClass.value.toJava)
         case loadClass_W: LoadClass_W =>
-          result.add(loadClass_W.value.toJava)
+          checkDependencies(result, loadClass_W.value.toJava)
         case getStatic: GETSTATIC =>
-          result.add(getStatic.declaringClass.toJava)
+          checkDependencies(result, getStatic.declaringClass.toJava)
         case invokeStatic: INVOKESTATIC =>
-          result.add(invokeStatic.declaringClass.toJava)
+          checkDependencies(result, invokeStatic.declaringClass.toJava)
         case anewArray: ANEWARRAY =>
-          result.add(anewArray.arrayType.toJava)
+          checkDependencies(result, anewArray.arrayType.toJava)
         case getField: GETFIELD =>
-          result.add(getField.declaringClass.toJava)
+          checkDependencies(result, getField.declaringClass.toJava)
         case _ =>
       }
     })
     result
+  }
+
+  def checkDependencies(result: mutable.HashSet[String], className: String) : Unit = {
+//    if (className.startsWith("java.lang")) {
+//      return
+//    }
+    result.add(className)
   }
 
   def checkRelationOfSummary(): Unit = {
@@ -92,7 +98,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
               println("class " + dependencies._1 + " calls the class " + summary)
             }
           })
-            //println("I've found the dependencies between:\n"+key+"\nand\n"+dependencies._1)
         }
       })
     })
@@ -109,5 +114,13 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 //    checkRelationOfSummary()
 //    val searchForDependencies = new SearchForDependencies(classWithDependencies)
 //  }
+
+  // todo list
+  // check when A depends on B and B depends on C, A should depend on C
+  // for test case we have to use the existing summaries (like Color class
+  // https://github.com/secure-software-engineering/FlowDroid/blob/develop/soot-infoflow-summaries/summariesManual/android.graphics.Color.xml)
+  // xml file of summary that we map
+  // change xml file (summary) into json file
+  // json file where we include dependencies of summary
 
 }
