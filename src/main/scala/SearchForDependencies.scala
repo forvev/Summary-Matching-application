@@ -7,13 +7,12 @@ import java.nio.file.{FileSystems, Files}
 
 import java.io.File
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   val project = Project(new File(jar_path))
   //hashmap for dependencies
   var classWithDependencies : mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
-  var classWithMatchSummary: mutable.Map[String, String] = mutable.HashMap()
+  var classWithMatchSummary: mutable.Map[String, ClassMatchSummary] = mutable.HashMap()
 
   def execute : Unit = {
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
@@ -48,11 +47,15 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       if(real_number_of_method==number_of_method){
         println("Pattern has been found!\nWith class: "+specific_class.methods)
         //we need to store information about existing summaries for future use(we will use this list of class to check dependencies)
-        classWithDependencies += (specific_class.fqn.replace("/", ".") -> getCalledClasses(specific_class))
-        classWithMatchSummary += (specific_class.fqn.replace("/", ".") -> classSummary.className)
+        val className = specific_class.fqn.replace("/", ".")
+        classWithDependencies += ( className -> getCalledClasses(specific_class))
+        var classMatchSummary = new ClassMatchSummary(className, classSummary.className)
+        classWithMatchSummary += ( className -> classMatchSummary)
       }
     })
   }
+
+
 
   def getCalledClasses(specific_class: ClassFile) : mutable.HashSet[String] = {
     var result = new mutable.HashSet[String]()
@@ -81,20 +84,20 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   }
 
   def checkDependencies(result: mutable.HashSet[String], className: String) : Unit = {
-//    if (className.startsWith("java.lang")) {
-//      return
-//    }
+    if (className.startsWith("java.lang.")) {
+      return
+    }
     result.add(className)
   }
 
   def checkRelationOfSummary(): Unit = {
     println("----------------------------------------------")
-    classWithMatchSummary.keys.foreach(summary =>{
+    classWithMatchSummary.foreach(summary =>{
       classWithDependencies.foreach(dependencies =>{
-        //("key: "+key+" dep: "+dependencies._1)
-        if (!summary.equals(dependencies._1)){
+        if (!summary._2.className.equals(dependencies._1)){
           dependencies._2.foreach(className => {
-            if (className.equals(summary)){
+            if (className.equals(summary._1)){
+              classWithMatchSummary(dependencies._1).addClassIsCalledByThisClass(summary._2)
               println("class " + dependencies._1 + " calls the class " + summary)
             }
           })
