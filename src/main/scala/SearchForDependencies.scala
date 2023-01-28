@@ -28,7 +28,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   def checkMatchSummary(classSummary: ClassSummary) : Unit = {
     //go through all of the classes in the project
     project.allProjectClassFiles.foreach(specific_class =>{
-      println(specific_class.methods)
       val number_of_method = specific_class.methods.length
       var real_number_of_method: Int = 0
       val methods_of_summary = classSummary.getMethods()
@@ -50,6 +49,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
         println("Pattern has been found!\nWith class: "+specific_class.methods)
         //we need to store information about existing summaries for future use(we will use this list of class to check dependencies)
         val className = specific_class.fqn.replace("/", ".")
+        println("class name: ", specific_class)
         classWithDependencies += ( className -> getCalledClasses(specific_class))
         var classMatchSummary = new ClassMatchSummary(className, classSummary.className)
         classWithMatchSummary += ( className -> classMatchSummary)
