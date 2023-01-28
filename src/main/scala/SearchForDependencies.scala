@@ -16,7 +16,8 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 
   def execute : Unit = {
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
-    Files.list(xml_urls_dir).toList.forEach(path => {
+    //read every summary inside the files and search for match summaries
+    Files.list(xml_urls_dir).forEach(path => {
       val readSummary = new ReadSummary(path.toString)
       val classSummary = readSummary.getClassSummary()
       checkMatchSummary(classSummary)
@@ -25,8 +26,9 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   }
 
   def checkMatchSummary(classSummary: ClassSummary) : Unit = {
+    //go through all of the classes in the project
     project.allProjectClassFiles.foreach(specific_class =>{
-
+      println(specific_class.methods)
       val number_of_method = specific_class.methods.length
       var real_number_of_method: Int = 0
       val methods_of_summary = classSummary.getMethods()
