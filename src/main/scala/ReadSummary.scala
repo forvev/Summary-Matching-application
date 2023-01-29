@@ -1,9 +1,26 @@
 import scala.collection.mutable.ListBuffer
 import scala.xml.XML
+import org.json4s.Xml.toJson
+import org.json4s.jackson.JsonMethods.{pretty, render}
+import spray.json.DefaultJsonProtocol.immSeqFormat
+
+import java.nio.file.{Files, Paths, StandardOpenOption}
+import spray.json._
 
 class ReadSummary(var xml_url: String) {
 
   val xml = XML.loadFile(xml_url)
+
+  //create a json structure, but with basic view (curly brackets and so on)
+  val data = toJson(xml)
+
+  //change the view to typical json view
+  val data_2 = pretty(render(data))
+  val json = data_2.toString()
+  //save json to the file
+  Files.write(Paths.get("./src/main/JSON/xml_files.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
+
+
   val temp = (xml \\ "summary" \\ "methods " \ "method")
   val className = xml_url.substring(xml_url.lastIndexOf('/')+1, xml_url.lastIndexOf('.'))
 

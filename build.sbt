@@ -19,4 +19,6 @@ libraryDependencies += "de.opal-project" % "architecture-validation_2.12" % "4.0
 libraryDependencies += "com.databricks" %% "spark-xml" % "0.15.0"
 //for scala test - flatSpec
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
-
+//for transfering xml file to json one
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.2.11"
+libraryDependencies += "io.spray" %%  "spray-json" % "1.3.6"

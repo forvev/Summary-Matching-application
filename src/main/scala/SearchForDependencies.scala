@@ -3,8 +3,8 @@ import org.opalj.ai.domain.l1.DefaultDomainWithCFGAndDefUse
 import org.opalj.br.analyses.Project
 import org.opalj.br.instructions._
 import org.opalj.br._
-import java.nio.file.{FileSystems, Files}
 
+import java.nio.file.{FileSystems, Files, Paths}
 import java.io.File
 import scala.collection.mutable
 
@@ -16,9 +16,20 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 
   def execute : Unit = {
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
+
+    //----------creating a json file for XMLs------------
+    // if the XML exists delete it
+    if (Files.exists(Paths.get("./src/main/JSON/xml_files.json"))) {
+      Files.deleteIfExists(Paths.get("./src/main/JSON/xml_files.json"))
+    }
+    //create a new json file
+    val path_2 = Paths.get("./src/main/JSON/xml_files.json")
+    Files.createFile(path_2)
+
     //read every summary inside the files and search for match summaries
     Files.list(xml_urls_dir).forEach(path => {
       val readSummary = new ReadSummary(path.toString)
+
       val classSummary = readSummary.getClassSummary()
       checkMatchSummary(classSummary)
     })
@@ -49,7 +60,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
         println("Pattern has been found!\nWith class: "+specific_class.methods)
         //we need to store information about existing summaries for future use(we will use this list of class to check dependencies)
         val className = specific_class.fqn.replace("/", ".")
-        println("class name: ", specific_class)
         classWithDependencies += ( className -> getCalledClasses(specific_class))
         var classMatchSummary = new ClassMatchSummary(className, classSummary.className)
         classWithMatchSummary += ( className -> classMatchSummary)

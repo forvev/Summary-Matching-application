@@ -1,13 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
-
-import collection.mutable
-import org.scalatest._
 import play.api.libs.json._
-
 import java.nio.file._
-import java.io.{File, PrintWriter}
-//import scala.reflect.io.File
-import scala.util.parsing.json.JSONObject
+
 
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
@@ -61,6 +55,7 @@ class ExampleSpec extends AnyFlatSpec {
     val json = data.toString()
     Files.write(Paths.get("./src/main/JSON/match_dependencies.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
   })
+
 
 
 }
