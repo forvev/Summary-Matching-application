@@ -16,5 +16,15 @@ class ClassMatchSummary(var className: String, var summary_Name: String) {
   private def addClassCallsThisClass(classMatchSummary: ClassMatchSummary): Unit = {
     classesCallThisClass.add(classMatchSummary)
   }
+
+  def getListOfDependencies(dependencies: mutable.HashSet[String], classSummary: ClassMatchSummary = null): Unit = {
+    if (classesAreCalledByThisClass.isEmpty)  return
+    classesAreCalledByThisClass.foreach(f => {
+      if (!dependencies.contains(f.className)){
+        dependencies.add(f.className)
+        f.getListOfDependencies(dependencies)
+      }
+    })
+  }
 }
 

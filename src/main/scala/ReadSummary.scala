@@ -16,7 +16,7 @@ class ReadSummary(var xml_url: String) {
 
   //change the view to typical json view
   val data_2 = pretty(render(data))
-  val json = data_2.toString()
+  val json = data_2
 
 
   val temp = (xml \\ "summary" \\ "methods " \ "method")

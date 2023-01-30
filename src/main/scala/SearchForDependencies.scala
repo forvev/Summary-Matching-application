@@ -1,13 +1,20 @@
+import org.json4s.DoubleJsonFormats.GenericFormat
+import org.json4s.jackson.JsonMethods.{pretty, render}
+
 import scala.xml.XML
 import org.opalj.ai.domain.l1.DefaultDomainWithCFGAndDefUse
 import org.opalj.br.analyses.Project
 import org.opalj.br.instructions._
 import org.opalj.br._
 import play.api.libs.json.Json
+import org.json4s.{Formats, jackson}
+import org.json4s.jackson.{JsonMethods, parseJson}
 
 import java.nio.file.{FileSystems, Files, Paths, StandardOpenOption}
 import java.io.File
 import scala.collection.mutable
+import scala.reflect.internal.util.FileUtils
+import scala.xml.XML.encoding
 
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   val project = Project(new File(jar_path))
@@ -27,38 +34,46 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     })
     checkRelationOfSummary()
 
+    writeMatchDependenciesInJson()
+    writeMatchSummary()
+  }
+
+  def writeMatchSummary() : Unit = {
     //If the file exists already, delete it
-    if (Files.exists(Paths.get("./src/main/JSON/match_summaries.json"))){
-      Files.deleteIfExists(Paths.get("./src/main/JSON/match_summaries.json"))
-    }
+    Files.deleteIfExists(Paths.get("./src/main/JSON/match_summaries.json"))
 
     //create a new JSON file with the summaries
     val path = Paths.get("./src/main/JSON/match_summaries.json")
     Files.createFile(path)
+    var result = new StringBuilder("[")
     classWithMatchSummary.foreach(u => {
       val data = Json.obj("Class_name" -> u._1, "Summary_name" -> u._2.summary_Name)
-      val json = data.toString()
-      Files.write(Paths.get("./src/main/JSON/match_summaries.json"), (json+"\n").getBytes(), StandardOpenOption.APPEND)
+      result.append(data.toString() + ", \n")
     })
-
-    //dependencies part
-
+    result.replace(result.lastIndexOf(','), result.length-1, "]")
+    Files.write(Paths.get("./src/main/JSON/match_summaries.json"), result.toString().getBytes(), StandardOpenOption.APPEND)
   }
 
   def writeMatchDependenciesInJson() : Unit = {
     //----------creating a json file for XMLs------------
     // if the XML exists delete it
-    Files.deleteIfExists(Paths.get("./src/main/JSON/match_dependencies.json"))
+    val path_json_with_dependencies = Paths.get("./src/main/JSON/match_dependencies.json")
+    Files.deleteIfExists(path_json_with_dependencies)
 
     //create a new JSON file with the dependencies
-    val path_json_with_dependencies = Paths.get("./src/main/JSON/match_dependencies.json")
-    Files.createFile(path_json_with_dependencies)
-    classWithDependencies.foreach(u => {
-      val data = Json.obj("Class_name" -> u._1, "dependent_class/es" -> u._2)
-      val json = data.toString()
-      Files.write(Paths.get("./src/main/JSON/match_dependencies.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
+    var result = new StringBuilder("[")
+    classWithMatchSummary.foreach(u => {
+      val dependencies = mutable.HashSet[String]()
+      u._2.getListOfDependencies(dependencies)
+      val data = Json.obj("Class_name" -> u._1, "Name_of_match_Summary" -> u._2.summary_Name, "depend_on_classes" -> dependencies )
+      val json = pretty(parseJson(data.toString()))
+      result.append(json + ", \n")
     })
+    result.replace(result.lastIndexOf(','), result.length-1, "]")
+    Files.write(path_json_with_dependencies, result.toString.getBytes())
   }
+
+
 
   def checkMatchSummary(classSummary: ClassSummary) : Unit = {
     //go through all of the classes in the project
