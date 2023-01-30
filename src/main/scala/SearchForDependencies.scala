@@ -96,7 +96,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   }
 
   def checkDependencies(result: mutable.HashSet[String], className: String) : Unit = {
-    if (className.startsWith("java.lang.")) {
+    if (className.startsWith("java.lang.") || className.endsWith("int")) {
       return
     }
     result.add(className)
