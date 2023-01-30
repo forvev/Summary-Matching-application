@@ -64,7 +64,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     var result = new StringBuilder("[")
     classWithMatchSummary.foreach(u => {
       val dependencies = mutable.HashSet[String]()
-      u._2.getListOfDependencies(dependencies)
+      u._2.getListOfDependencies(dependencies, u._1)
       val data = Json.obj("Class_name" -> u._1, "Name_of_match_Summary" -> u._2.summary_Name, "depend_on_classes" -> dependencies )
       val json = pretty(parseJson(data.toString()))
       result.append(json + ", \n")

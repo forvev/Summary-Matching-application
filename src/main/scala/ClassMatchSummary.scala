@@ -17,12 +17,12 @@ class ClassMatchSummary(var className: String, var summary_Name: String) {
     classesCallThisClass.add(classMatchSummary)
   }
 
-  def getListOfDependencies(dependencies: mutable.HashSet[String], classSummary: ClassMatchSummary = null): Unit = {
+  def getListOfDependencies(dependencies: mutable.HashSet[String], className: String): Unit = {
     if (classesAreCalledByThisClass.isEmpty)  return
     classesAreCalledByThisClass.foreach(f => {
-      if (!dependencies.contains(f.className)){
+      if (!dependencies.contains(f.className) && f.className != className){
         dependencies.add(f.className)
-        f.getListOfDependencies(dependencies)
+        f.getListOfDependencies(dependencies, className)
       }
     })
   }
