@@ -6,7 +6,7 @@ import java.nio.file._
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
   val xml_urls_path = "./src/main/xml-files"
-  val projectJAR2 = "./src/main/jar-files/STD_app.jar"
+  val projectJAR2 = "./src/main/jar-files/STD_app_more_types.jar"
   val object_to_test = new SearchForDependencies(xml_urls_path = xml_urls_path, jar_path = projectJAR2)
   object_to_test.execute
   "Class with dependencies" can "have size more than 0" in {
@@ -28,33 +28,9 @@ class ExampleSpec extends AnyFlatSpec {
     assert(containsName == true, "Test_ClassSummary doesn't exist!")
   }
 
-  //If the file exists already, delete it
-  if (Files.exists(Paths.get("./src/main/JSON/match_summaries.json"))){
-    Files.deleteIfExists(Paths.get("./src/main/JSON/match_summaries.json"))
-  }
 
-  //create a new JSON file with the summaries
-  val path = Paths.get("./src/main/JSON/match_summaries.json")
-  Files.createFile(path)
-  object_to_test.classWithMatchSummary.foreach(u => {
-    val data = Json.obj("Class_name" -> u._1, "Summary_name" -> u._2.summary_Name)
-    val json = data.toString()
-    Files.write(Paths.get("./src/main/JSON/match_summaries.json"), (json+"\n").getBytes(), StandardOpenOption.APPEND)
-  })
 
-  //dependencies part
-  if (Files.exists(Paths.get("./src/main/JSON/match_dependencies.json"))) {
-    Files.deleteIfExists(Paths.get("./src/main/JSON/match_dependencies.json"))
-  }
 
-  //create a new JSON file with the dependencies
-  val path_2 = Paths.get("./src/main/JSON/match_dependencies.json")
-  Files.createFile(path_2)
-  object_to_test.classWithDependencies.foreach(u => {
-    val data = Json.obj("Class_name" -> u._1, "dependent_class/es" -> u._2)
-    val json = data.toString()
-    Files.write(Paths.get("./src/main/JSON/match_dependencies.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
-  })
 
 
 

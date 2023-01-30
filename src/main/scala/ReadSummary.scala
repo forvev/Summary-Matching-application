@@ -17,12 +17,17 @@ class ReadSummary(var xml_url: String) {
   //change the view to typical json view
   val data_2 = pretty(render(data))
   val json = data_2.toString()
-  //save json to the file
-  Files.write(Paths.get("./src/main/JSON/xml_files.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
 
 
   val temp = (xml \\ "summary" \\ "methods " \ "method")
-  val className = xml_url.substring(xml_url.lastIndexOf('/')+1, xml_url.lastIndexOf('.'))
+  val className = xml_url.substring(xml_url.lastIndexOf('\\')+1, xml_url.lastIndexOf('.'))
+
+  //save json to the file
+  val path_as_string = "./src/main/summaries_as_json/" + className + ".json"
+  val path = Paths.get(path_as_string)
+  Files.deleteIfExists(path)
+  Files.createFile(path)
+  Files.write(path, (json + "\n").getBytes(), StandardOpenOption.APPEND)
 
   def getClassSummary(): ClassSummary = {
     var methods = new ListBuffer[MethodSummary]()

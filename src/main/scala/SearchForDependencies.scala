@@ -3,8 +3,9 @@ import org.opalj.ai.domain.l1.DefaultDomainWithCFGAndDefUse
 import org.opalj.br.analyses.Project
 import org.opalj.br.instructions._
 import org.opalj.br._
+import play.api.libs.json.Json
 
-import java.nio.file.{FileSystems, Files, Paths}
+import java.nio.file.{FileSystems, Files, Paths, StandardOpenOption}
 import java.io.File
 import scala.collection.mutable
 
@@ -17,15 +18,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   def execute : Unit = {
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
 
-    //----------creating a json file for XMLs------------
-    // if the XML exists delete it
-    if (Files.exists(Paths.get("./src/main/JSON/xml_files.json"))) {
-      Files.deleteIfExists(Paths.get("./src/main/JSON/xml_files.json"))
-    }
-    //create a new json file
-    val path_2 = Paths.get("./src/main/JSON/xml_files.json")
-    Files.createFile(path_2)
-
     //read every summary inside the files and search for match summaries
     Files.list(xml_urls_dir).forEach(path => {
       val readSummary = new ReadSummary(path.toString)
@@ -34,6 +26,38 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       checkMatchSummary(classSummary)
     })
     checkRelationOfSummary()
+
+    //If the file exists already, delete it
+    if (Files.exists(Paths.get("./src/main/JSON/match_summaries.json"))){
+      Files.deleteIfExists(Paths.get("./src/main/JSON/match_summaries.json"))
+    }
+
+    //create a new JSON file with the summaries
+    val path = Paths.get("./src/main/JSON/match_summaries.json")
+    Files.createFile(path)
+    classWithMatchSummary.foreach(u => {
+      val data = Json.obj("Class_name" -> u._1, "Summary_name" -> u._2.summary_Name)
+      val json = data.toString()
+      Files.write(Paths.get("./src/main/JSON/match_summaries.json"), (json+"\n").getBytes(), StandardOpenOption.APPEND)
+    })
+
+    //dependencies part
+
+  }
+
+  def writeMatchDependenciesInJson() : Unit = {
+    //----------creating a json file for XMLs------------
+    // if the XML exists delete it
+    Files.deleteIfExists(Paths.get("./src/main/JSON/match_dependencies.json"))
+
+    //create a new JSON file with the dependencies
+    val path_json_with_dependencies = Paths.get("./src/main/JSON/match_dependencies.json")
+    Files.createFile(path_json_with_dependencies)
+    classWithDependencies.foreach(u => {
+      val data = Json.obj("Class_name" -> u._1, "dependent_class/es" -> u._2)
+      val json = data.toString()
+      Files.write(Paths.get("./src/main/JSON/match_dependencies.json"), (json + "\n").getBytes(), StandardOpenOption.APPEND)
+    })
   }
 
   def checkMatchSummary(classSummary: ClassSummary) : Unit = {
@@ -96,7 +120,8 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   }
 
   def checkDependencies(result: mutable.HashSet[String], className: String) : Unit = {
-    if (className.startsWith("java.lang.") || className.endsWith("int")) {
+    val primitiveTypes = List("int", "boolean", "char", "double", "float", "short", "long", "byte")
+    if (className.startsWith("java.lang.") || primitiveTypes.contains(className)) {
       return
     }
     result.add(className)

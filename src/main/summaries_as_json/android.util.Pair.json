@@ -1,0 +1,69 @@
+{
+  "summary" : {
+    "fileFormatVersion" : "101",
+    "methods" : {
+      "method" : [ {
+        "id" : "void <init>(java.lang.Object,java.lang.Object)",
+        "flows" : {
+          "flow" : [ {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "ParameterIndex" : "0",
+            "sourceSinkType" : "Parameter",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object first]",
+            "sourceSinkType" : "Field"
+          }, {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "ParameterIndex" : "1",
+            "sourceSinkType" : "Parameter",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object second]",
+            "sourceSinkType" : "Field"
+          } ]
+        }
+      }, {
+        "id" : "android.util.Pair create(java.lang.Object,java.lang.Object)",
+        "flows" : {
+          "flow" : [ {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "ParameterIndex" : "0",
+            "sourceSinkType" : "Parameter",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object first]",
+            "sourceSinkType" : "Return"
+          }, {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "ParameterIndex" : "1",
+            "sourceSinkType" : "Parameter",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object second]",
+            "sourceSinkType" : "Return"
+          } ]
+        }
+      }, {
+        "id" : "java.lang.String toString()",
+        "flows" : {
+          "flow" : [ {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object first]",
+            "sourceSinkType" : "Field",
+            "sourceSinkType" : "Return"
+          }, {
+            "typeChecking" : "false",
+            "isAlias" : "true",
+            "AccessPathTypes" : "[java.lang.Object]",
+            "AccessPath" : "[android.util.Pair: java.lang.Object second]",
+            "sourceSinkType" : "Field",
+            "sourceSinkType" : "Return"
+          } ]
+        }
+      } ]
+    }
+  }
+}
