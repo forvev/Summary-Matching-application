@@ -30,18 +30,18 @@ class ReadSummary(var xml_url: String) {
   Files.write(path, (json + "\n").getBytes(), StandardOpenOption.APPEND)
 
   def getClassSummary(): ClassSummary = {
-    var methods = new ListBuffer[MethodSummary]()
+    var methods = new ListBuffer[MethodOfSummary]()
     var result = new ClassSummary(className)
     (xml \\ "summary" \\ "methods" \\ "method" \\ "@id").foreach(method => {
-      var methodSummary = new MethodSummary()
+      var methodSummary = new MethodOfSummary()
       stringToMethodInfo(method.toString(), methodSummary)
       methods.append(methodSummary)
     })
-    result.setMethods(methods.toList)
+    result.setMethods(methods)
     result
   }
 
-  private def stringToMethodInfo(str_id: String, methodSummary: MethodSummary) : Unit = {
+  private def stringToMethodInfo(str_id: String, methodSummary: MethodOfSummary) : Unit = {
     val tokens = str_id.split(" ")
     methodSummary.returnType = tokens(0)
     val methodDescription = tokens(1)
@@ -49,9 +49,8 @@ class ReadSummary(var xml_url: String) {
     if (parameters_as_string.isEmpty)
       methodSummary.parametersLength = 0
     else {
-      //methodSummary.methodParameters = parameters_as_string.split(',')
-      methodSummary.methodParameters = parameters_as_string
-      methodSummary.parametersLength = parameters_as_string.split(',').length
+      methodSummary.methodParameters = parameters_as_string.split(',')
+      methodSummary.parametersLength = methodSummary.methodParameters.length
     }
   }
 

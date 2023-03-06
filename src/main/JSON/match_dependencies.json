@@ -1,3 +1,76 @@
-{"Class_name":"com.example.std_app.TestClassSummary3","dependent_class/es":["com.example.std_app.TestClassSummary2","int"]}
-{"Class_name":"com.example.std_app.TestClassSummary","dependent_class/es":["com.example.std_app.TestClassSummary2"]}
-{"Class_name":"com.example.std_app.TestClassSummary2","dependent_class/es":["com.example.std_app.TestClassSummary"]}
+[ {
+  "Class_name" : "com.example.std_app.TestClassSummary4",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "java.util.concurrent.CountDownLatch",
+    "match_probability" : 1
+  } ],
+  "depend_on_classes" : [ {
+    "Class_name" : "com.example.std_app.TestClassSummary2",
+    "match_summaries" : [ {
+      "Summary_name" : "android.util.Pair",
+      "match_probability" : 1
+    } ]
+  }, {
+    "Class_name" : "com.example.std_app.TestClassSummary",
+    "match_summaries" : [ {
+      "Summary_name" : "PatternMatcher",
+      "match_probability" : 0.8333333134651184
+    } ]
+  } ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary3",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "java.util.concurrent.CountDownLatch",
+    "match_probability" : 1
+  } ],
+  "depend_on_classes" : [ ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "PatternMatcher",
+    "match_probability" : 0.8333333134651184
+  } ],
+  "depend_on_classes" : [ {
+    "Class_name" : "com.example.std_app.TestClassSummary2",
+    "match_summaries" : [ {
+      "Summary_name" : "android.util.Pair",
+      "match_probability" : 1
+    } ]
+  } ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary2",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "android.util.Pair",
+    "match_probability" : 1
+  } ],
+  "depend_on_classes" : [ {
+    "Class_name" : "com.example.std_app.TestClassSummary",
+    "match_summaries" : [ {
+      "Summary_name" : "PatternMatcher",
+      "match_probability" : 0.8333333134651184
+    } ]
+  } ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary5",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "java.util.concurrent.CountDownLatch",
+    "match_probability" : 1
+  } ],
+  "depend_on_classes" : [ {
+    "Class_name" : "com.example.std_app.TestClassSummary2",
+    "match_summaries" : [ {
+      "Summary_name" : "android.util.Pair",
+      "match_probability" : 1
+    } ]
+  }, {
+    "Class_name" : "com.example.std_app.TestClassSummary",
+    "match_summaries" : [ {
+      "Summary_name" : "PatternMatcher",
+      "match_probability" : 0.8333333134651184
+    } ]
+  } ]
+} ]
