@@ -21,6 +21,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   var classSummaries: mutable.HashSet[ClassSummary] = mutable.HashSet()
 
   def execute(): Unit = {
+
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
 
     //read every summary inside the files and search for match summaries
@@ -33,6 +34,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     })
 
     project.allProjectClassFiles.foreach(specific_class => {
+
       classSummaries.foreach(classSummary => {
         checkMatchSummary(classSummary, specific_class)
       })
@@ -152,24 +154,13 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     })
   }
 
+  def get_classWithDependencies_map_size(): Integer = {
+    classWithDependencies.size
+  }
 
-  //  def main(args: Array[String]): Unit = {
-  //    val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
-  //    Files.list(xml_urls_dir).toList.forEach(path => {
-  //      val readSummary = new ReadSummary(path.toString)
-  //      val classSummary = readSummary.getClassSummary()
-  //      checkMatchSummary(classSummary)
-  //    })
-  //    checkRelationOfSummary()
-  //    val searchForDependencies = new SearchForDependencies(classWithDependencies)
-  //  }
+  def get_classWithMatchSummary_map_size(): Integer = {
+    classWithMatchSummary.size
+  }
 
-  // todo list
-  // check when A depends on B and B depends on C, A should depend on C
-  // for test case we have to use the existing summaries (like Color class
-  // https://github.com/secure-software-engineering/FlowDroid/blob/develop/soot-infoflow-summaries/summariesManual/android.graphics.Color.xml)
-  // xml file of summary that we map
-  // change xml file (summary) into json file
-  // json file where we include dependencies of summary
 
 }
