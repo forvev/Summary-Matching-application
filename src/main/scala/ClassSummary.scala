@@ -31,6 +31,12 @@ class ClassSummary(var className: String){
     summary_methods.isEmpty
   }
 
+  override def clone(): ClassSummary = {
+    var result = new ClassSummary(this.className)
+    result.match_probability = this.match_probability
+    result
+  }
+
   def get_match_probability(): Float = {
     match_probability
   }

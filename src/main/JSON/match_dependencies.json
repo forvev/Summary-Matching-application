@@ -14,7 +14,7 @@
     "Class_name" : "com.example.std_app.TestClassSummary",
     "match_summaries" : [ {
       "Summary_name" : "PatternMatcher",
-      "match_probability" : 0.8333333134651184
+      "match_probability" : 0.7142857313156128
     } ]
   } ]
 }, 
@@ -30,7 +30,7 @@
   "Class_name" : "com.example.std_app.TestClassSummary",
   "Name_of_match_Summaries" : [ {
     "Summary_name" : "PatternMatcher",
-    "match_probability" : 0.8333333134651184
+    "match_probability" : 0.7142857313156128
   } ],
   "depend_on_classes" : [ {
     "Class_name" : "com.example.std_app.TestClassSummary2",
@@ -50,7 +50,7 @@
     "Class_name" : "com.example.std_app.TestClassSummary",
     "match_summaries" : [ {
       "Summary_name" : "PatternMatcher",
-      "match_probability" : 0.8333333134651184
+      "match_probability" : 0.7142857313156128
     } ]
   } ]
 }, 
@@ -58,7 +58,7 @@
   "Class_name" : "com.example.std_app.TestClassSummary5",
   "Name_of_match_Summaries" : [ {
     "Summary_name" : "java.util.concurrent.CountDownLatch",
-    "match_probability" : 1
+    "match_probability" : 0.75
   } ],
   "depend_on_classes" : [ {
     "Class_name" : "com.example.std_app.TestClassSummary2",
@@ -70,7 +70,7 @@
     "Class_name" : "com.example.std_app.TestClassSummary",
     "match_summaries" : [ {
       "Summary_name" : "PatternMatcher",
-      "match_probability" : 0.8333333134651184
+      "match_probability" : 0.7142857313156128
     } ]
   } ]
 } ]

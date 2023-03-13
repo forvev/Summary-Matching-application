@@ -95,7 +95,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       val className = classFile.fqn.replace("/", ".")
       classWithDependencies += (className -> getCalledClasses(classFile))
       var classMatchSummary = new ClassMatchSummary(className)
-      classMatchSummary.matchSummaries.add(classSummary)
+      classMatchSummary.matchSummaries.add(classSummary.clone())
       classWithMatchSummary += ( className -> classMatchSummary)
     }
 

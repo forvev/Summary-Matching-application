@@ -16,7 +16,7 @@
   "Class_name" : "com.example.std_app.TestClassSummary",
   "match_summaries" : [ {
     "Summary_name" : "PatternMatcher",
-    "match_probability" : 0.8333333134651184
+    "match_probability" : 0.7142857313156128
   } ]
 }, 
 {
@@ -30,6 +30,6 @@
   "Class_name" : "com.example.std_app.TestClassSummary5",
   "match_summaries" : [ {
     "Summary_name" : "java.util.concurrent.CountDownLatch",
-    "match_probability" : 1
+    "match_probability" : 0.75
   } ]
 } ]
