@@ -6,7 +6,6 @@ import play.api.libs.json._
 
 import java.nio.file._
 
-
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
   val xml_urls_path = "./src/main/xml-files"

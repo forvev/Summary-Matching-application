@@ -2,10 +2,27 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "2.12.15"
 
+assembly / mainClass := Some("MainClass")
+
+mainClass in Compile := Some("MainClass")
+
+//In oder to create a docker we need to enable following plugins
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+
 lazy val root = (project in file("."))
   .settings(
     name := "SoftwareDevelopmentProject"
   )
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", _*) => MergeStrategy.discard
+  case _                        => MergeStrategy.first
+}
+
+assemblyJarName in assembly := "SDT_summaries_app.jar"
+//enablePlugins(JavaAppPackaging)
+//enablePlugins(DockerPlugin)
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 libraryDependencies += "de.opal-project" % "tools_2.12" % "4.0.0"

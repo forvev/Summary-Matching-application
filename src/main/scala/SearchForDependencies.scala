@@ -13,6 +13,7 @@ import scala.reflect.internal.util.FileUtils
 import scala.reflect.runtime.universe.{runtimeMirror, typeOf}
 import scala.xml.XML.encoding
 
+
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   val project = Project(new File(jar_path))
   //hashmap for dependencies
@@ -32,6 +33,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       classSummaries.add(classSummary)
 
     })
+
 
     project.allProjectClassFiles.foreach(specific_class => {
 
