@@ -7,10 +7,20 @@ import spray.json.DefaultJsonProtocol.immSeqFormat
 import java.nio.file.{Files, Paths, StandardOpenOption}
 import spray.json._
 
+import scala.reflect.internal.util.ScalaClassLoader.apply
+import scala.tools.nsc.Main
+
 
 class ReadSummary(var xml_url: String) {
 
-  val xml = XML.loadFile(xml_url)
+  //val xml = XML.loadFile(xml_url)
+  //println(xml)
+  val parts = xml_url.split("/")
+  val result = parts.last
+
+  val xml_x = getClass().getResourceAsStream("xml-files/"+result)
+  println("test: "+xml_x)
+  val xml = XML.load(xml_x)
 
   //create a json structure, but with basic view (curly brackets and so on)
   val data = toJson(xml)
@@ -26,9 +36,10 @@ class ReadSummary(var xml_url: String) {
   //save json to the file
   //println(className)
   //val path_as_string = "./src/main/summaries_as_json/" + className + ".json"
-  val path = Paths.get("./src/main/JSON/xml_files.json")
   //Files.deleteIfExists(path)
   //Files.createFile(path)
+
+  val path = Paths.get("./src/main/JSON/xml_files.json")
   Files.write(path, (json + "\n").getBytes(), StandardOpenOption.APPEND)
 
   def getClassSummary(): ClassSummary = {
