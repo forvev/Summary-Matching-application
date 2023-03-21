@@ -85,4 +85,12 @@
       "match_probability" : 0.7142857313156128
     } ]
   } ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary7",
+  "Name_of_match_Summaries" : [ {
+    "Summary_name" : "java.util.concurrent.CountDownLatch",
+    "match_probability" : 0.75
+  } ],
+  "depend_on_classes" : [ ]
 } ]

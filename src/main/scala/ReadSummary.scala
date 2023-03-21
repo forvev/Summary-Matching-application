@@ -17,11 +17,13 @@ class ReadSummary(var url: String) {
     var result = new ClassSummary(className)
     var methods = new ListBuffer[MethodOfSummary]()
     implicit val formats = DefaultFormats
-    val json_content = scala.io.Source.fromFile(url).mkString.stripMargin
+    val source = scala.io.Source.fromFile(url)
+    val json_content = source.mkString.stripMargin
+    source.close()
     val json_data = parse(json_content)
     val summary_methods = (json_data \ "summary" \ "methods" \ "method" \ "id").children
     summary_methods.foreach(method => {
-      var methodSummary = new MethodOfSummary()
+      var methodSummary = new MethodOfSummary(className, method.asInstanceOf[JString].s)
       stringToMethodInfo(method.asInstanceOf[JString].s, methodSummary)
       methods.append(methodSummary)
     })
@@ -65,7 +67,7 @@ class ReadSummary(var url: String) {
     var methods = new ListBuffer[MethodOfSummary]()
     var result = new ClassSummary(className)
     (xml \\ "summary" \\ "methods" \\ "method" \\ "@id").foreach(method => {
-      var methodSummary = new MethodOfSummary()
+      var methodSummary = new MethodOfSummary(className, method.toString())
       stringToMethodInfo(method.toString(), methodSummary)
       methods.append(methodSummary)
     })

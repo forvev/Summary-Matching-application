@@ -32,4 +32,11 @@
     "Summary_name" : "java.util.concurrent.CountDownLatch",
     "match_probability" : 0.75
   } ]
+}, 
+{
+  "Class_name" : "com.example.std_app.TestClassSummary7",
+  "match_summaries" : [ {
+    "Summary_name" : "java.util.concurrent.CountDownLatch",
+    "match_probability" : 0.75
+  } ]
 } ]
