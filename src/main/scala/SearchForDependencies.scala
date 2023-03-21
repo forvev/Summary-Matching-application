@@ -110,25 +110,31 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       // filter java native type
       checkDependencies(result, field.fieldType.toJava)
     })
-    specific_class.methodBodies.foreach(code => {
-      code.instructions.foreach {
-        case loadClass: LoadClass =>
-          checkDependencies(result, loadClass.value.toJava)
-        case loadClass_W: LoadClass_W =>
-          checkDependencies(result, loadClass_W.value.toJava)
-        case getStatic: GETSTATIC =>
-          checkDependencies(result, getStatic.declaringClass.toJava)
-        case invokeStatic: INVOKESTATIC =>
-          checkDependencies(result, invokeStatic.declaringClass.toJava)
-        case anewArray: ANEWARRAY =>
-          checkDependencies(result, anewArray.arrayType.toJava)
-        case getField: GETFIELD =>
-          checkDependencies(result, getField.declaringClass.toJava)
-        case inst_new: NEW =>
-          checkDependencies(result, inst_new.objectType.toJava)
-        case invokeSpecial: INVOKESPECIAL =>
-          checkDependencies(result, invokeSpecial.declaringClass.toJava)
-        case _ =>
+    specific_class.methods.foreach(method => {
+      method.parameterTypes.foreach(p_type => {
+        checkDependencies(result, p_type.toJava)
+      })
+      if (method.body.isDefined){
+        val code = method.body.get
+        code.instructions.foreach {
+          case loadClass: LoadClass =>
+            checkDependencies(result, loadClass.value.toJava)
+          case loadClass_W: LoadClass_W =>
+            checkDependencies(result, loadClass_W.value.toJava)
+          case getStatic: GETSTATIC =>
+            checkDependencies(result, getStatic.declaringClass.toJava)
+          case invokeStatic: INVOKESTATIC =>
+            checkDependencies(result, invokeStatic.declaringClass.toJava)
+          case anewArray: ANEWARRAY =>
+            checkDependencies(result, anewArray.arrayType.toJava)
+          case getField: GETFIELD =>
+            checkDependencies(result, getField.declaringClass.toJava)
+          case inst_new: NEW =>
+            checkDependencies(result, inst_new.objectType.toJava)
+          case invokeSpecial: INVOKESPECIAL =>
+            checkDependencies(result, invokeSpecial.declaringClass.toJava)
+          case _ =>
+        }
       }
     })
     result
