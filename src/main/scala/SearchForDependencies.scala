@@ -27,7 +27,11 @@ import scala.tools.nsc.Main
 
 
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
-  val project = Project(new File(jar_path))
+  //val project = Project(new File(jar_path))
+  implicit val project = Project(
+    new java.io.File(jar_path), // path to the JAR files/directories containing the project
+    org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
+  )
   //hashmap for dependencies
   var classWithDependencies: mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
   var classWithMatchSummary: mutable.Map[String, ClassMatchSummary] = mutable.HashMap()
@@ -117,8 +121,9 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 //    })
 
 
-    project.allProjectClassFiles.foreach(specific_class => {
 
+    project.allProjectClassFiles.foreach(specific_class => {
+      println(specific_class.fqn)
       classSummaries.foreach(classSummary => {
         checkMatchSummary(classSummary, specific_class)
       })
@@ -208,6 +213,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 
   def checkMatchSummary(classSummary: ClassSummary, classFile: ClassFile): Unit = {
     //go through all of the classes in the project
+    println("summary: "+classSummary.className)
     if (classSummary.isMatched(classFile)) {
       println("Pattern has been found!\nWith class: " + classFile.methods)
       val className = classFile.fqn.replace("/", ".")
