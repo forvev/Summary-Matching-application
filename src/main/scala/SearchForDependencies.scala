@@ -28,7 +28,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     Files.list(xml_urls_dir).forEach(path => {
       val readSummary = new ReadSummary(path.toString)
 
-      val classSummary = readSummary.getClassSummary()
+      val classSummary = readSummary.get_classSummary()
       classSummaries.add(classSummary)
 
     })

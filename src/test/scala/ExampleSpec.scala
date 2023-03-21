@@ -9,10 +9,10 @@ import java.nio.file._
 
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
-  val xml_urls_path = "./src/main/xml-files"
+  val xml_urls_path = "./src/main/summaries_as_json"
   val projectJAR2 = "./src/main/jar-files/classes.jar"
   val object_to_test = new SearchForDependencies(xml_urls_path = xml_urls_path, jar_path = projectJAR2)
-  object_to_test.execute
+  object_to_test.execute()
   "Class with dependencies" can "have size more than 0" in {
     assert(object_to_test.classWithDependencies.empty != 0)
   }

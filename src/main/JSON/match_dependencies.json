@@ -24,7 +24,19 @@
     "Summary_name" : "java.util.concurrent.CountDownLatch",
     "match_probability" : 1
   } ],
-  "depend_on_classes" : [ ]
+  "depend_on_classes" : [ {
+    "Class_name" : "com.example.std_app.TestClassSummary2",
+    "match_summaries" : [ {
+      "Summary_name" : "android.util.Pair",
+      "match_probability" : 1
+    } ]
+  }, {
+    "Class_name" : "com.example.std_app.TestClassSummary",
+    "match_summaries" : [ {
+      "Summary_name" : "PatternMatcher",
+      "match_probability" : 0.7142857313156128
+    } ]
+  } ]
 }, 
 {
   "Class_name" : "com.example.std_app.TestClassSummary",

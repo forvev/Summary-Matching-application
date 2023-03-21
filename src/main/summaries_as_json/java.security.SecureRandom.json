@@ -1,0 +1,34 @@
+{
+  "summary" : {
+    "fileFormatVersion" : "101",
+    "hierarchy" : {
+      "superClass" : "java.util.Random",
+      "name" : "java.io.Serializable"
+    },
+    "methods" : {
+      "method" : [ {
+        "id" : "void nextBytes(byte[])",
+        "flows" : {
+          "flow" : {
+            "typeChecking" : "false",
+            "isAlias" : "false",
+            "sourceSinkType" : "Field",
+            "ParameterIndex" : "0",
+            "sourceSinkType" : "Parameter"
+          }
+        }
+      }, {
+        "id" : "void nextBytes(byte[],java.security.SecureRandomParameters)",
+        "flows" : {
+          "flow" : {
+            "typeChecking" : "false",
+            "isAlias" : "false",
+            "sourceSinkType" : "Field",
+            "ParameterIndex" : "0",
+            "sourceSinkType" : "Parameter"
+          }
+        }
+      } ]
+    }
+  }
+}
