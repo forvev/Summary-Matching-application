@@ -41,7 +41,7 @@ class ReadSummary(var url: String) {
 
 
   private def read_xml_file(): ClassSummary ={
-    val parts = xml_url.split("/")
+    val parts = url.split("/")
     val result = parts.last
 
     val xml_x = getClass().getResourceAsStream("xml-files/" + result)
@@ -60,7 +60,7 @@ class ReadSummary(var url: String) {
 
 
     //save json to the file
-    val path_as_string = "./src/main/summaries_as_json/" + className + ".json"
+    val path_as_string = className + ".json"
     val path = Paths.get(path_as_string)
     Files.deleteIfExists(path)
     Files.createFile(path)

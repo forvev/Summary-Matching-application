@@ -77,7 +77,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     ls.forEach(path=>{
       println("path: "+path)
       val readSummary = new ReadSummary(path.toString)
-      val classSummary = readSummary.getClassSummary()
+      val classSummary = readSummary.get_classSummary()
       classSummaries.add(classSummary)
     })
 
@@ -158,11 +158,11 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     }
   }
 
-  private def getResourceAsStream(resource: String) = {
-    val in = getContextClassLoader.getResourceAsStream(resource)
-    if (in == null) getClass.getResourceAsStream(resource)
-    else in
-  }
+//  private def getResourceAsStream(resource: String) = {
+//    val in = getContextClassLoader.getResourceAsStream(resource)
+//    if (in == null) getClass.getResourceAsStream(resource)
+//    else in
+//  }
 
   def writeMatchSummary(): Unit = {
     //If the file exists already, delete it
