@@ -7,31 +7,119 @@ import org.json4s.{Formats, jackson}
 import org.json4s.jackson.{JsonMethods, parseJson}
 
 import java.nio.file.{FileSystems, Files, Paths, StandardOpenOption}
-import java.io.File
+import java.io.{BufferedReader, File, InputStream}
+import java.net.{URLClassLoader, URLDecoder}
+import java.util
 import scala.collection.mutable
+import scala.io.Source
 import scala.reflect.internal.util.FileUtils
 import scala.reflect.runtime.universe.{runtimeMirror, typeOf}
+import scala.tools.jline_embedded.internal.InputStreamReader
+import scala.xml.XML
 import scala.xml.XML.encoding
+import java.nio.file._
+import scala.collection.JavaConverters._
+import java.net.{URI, URL}
+import java.util.stream._
+import scala.tools.nsc.Main
+
+
 
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
-  val project = Project(new File(jar_path))
+  //val project = Project(new File(jar_path))
+  implicit val project = Project(
+    new java.io.File(jar_path), // path to the JAR files/directories containing the project
+    org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
+  )
   //hashmap for dependencies
   var classWithDependencies: mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
   var classWithMatchSummary: mutable.Map[String, ClassMatchSummary] = mutable.HashMap()
   var classSummaries: mutable.HashSet[ClassSummary] = mutable.HashSet()
 
   def execute(): Unit = {
-
+    println("here 1")
     val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
+    println("here 2")
+
+
+    val xx = new File(".").getAbsolutePath
+
+    println("absolut: "+xx)
+//    val xml_folder_2 = getClass.getResource("xml-files")
+//    val resourcePath = Paths.get(URLDecoder.decode(xml_folder_2.getFile, "UTF-8")).toString.replace("!","")
+//
+//    println("path::: "+xml_folder_2)
+//    //val xml_folder = Paths.get(xml_folder_2.getPath)
+//    val dir_path = new File(resourcePath).listFiles.map(_.getPath)
+//    println("path: "+dir_path)
+//    println("new path:")
+//    dir_path.foreach(d=>{
+//      println(d)
+//    })
+
+//    val dir_url = ClassLoader.getSystemResource("xml-files")
+//    println("location: "+dir_url.toURI)
+//    val dir = new File(dir_url.toURI).listFiles.map(_.getPath)
+
+//    val classLoader = getClass.getClassLoader
+//    val resourceUrl = classLoader.getResource("xml-files")
+//    println("location: "+resourceUrl.toURI)
+//    val dir = new File(resourceUrl.toURI).listFiles.map(_.getPath)
+//
+//    dir.foreach(path=>{
+//      println(path)
+//    })
+
+    val url = Main.getClass.getResource("/xml-files")
+    val path = getPath(url)
+    val ls = Files.list(path)
+
+    ls.forEach(path=>{
+      println("path: "+path)
+      val readSummary = new ReadSummary(path.toString)
+      val classSummary = readSummary.getClassSummary()
+      classSummaries.add(classSummary)
+    })
+
+
+
+    //    Files.list(dir_path).forEach(path=>{
+//      println(path)
+//    })
+
+
+   // val xml_urls_dir_2 = FileSystems.getDefault.getPath(dir_path.toString)
+
+    //println("d: "+xml_urls_dir_2)
+
+
+//    val directory = Paths.get(xml_folder_2).toString
+//    val xml_folder = new File(directory)
+
+//    println("here 3: "+xml_folder.listFiles().toList)
+//
+//    xml_folder.listFiles().foreach(path=>{
+//      println("path: "+path)
+//    })
+
+//    Files.list(xml_urls_dir).forEach(path=>{
+//      println(path)
+//    })
+    println("here 4")
+
+
+    //val xml_urls_dir = getClass().getClassLoader().getResourceAsStream(xml_urls_path)
 
     //read every summary inside the files and search for match summaries
-    Files.list(xml_urls_dir).forEach(path => {
-      val readSummary = new ReadSummary(path.toString)
+//    Files.list(xml_urls_dir).forEach(path => {
+//      println("path: "+path)
+//      val readSummary = new ReadSummary(path.toString)
+//      val classSummary = readSummary.getClassSummary()
+//      classSummaries.add(classSummary)
+//
+//    })
 
-      val classSummary = readSummary.get_classSummary()
-      classSummaries.add(classSummary)
 
-    })
 
     project.allProjectClassFiles.foreach(specific_class => {
 
@@ -42,6 +130,38 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     checkRelationOfSummary()
     writeMatchDependenciesInJson()
     writeMatchSummary()
+  }
+
+  // Helper for reading an individual file.
+  def readFile(path: Path): String =
+    Source.fromInputStream(Files.newInputStream(path), "UTF-8").getLines.mkString("\n")
+
+
+  private var jarFS: FileSystem = null; // Static variable for storing a FileSystem. Will be loaded on the first call to getPath.
+
+  /**
+   * Gets a Path object corresponding to an URL.
+   *
+   * @param url The URL could follow the `file:` (usually used in dev) or `jar:` (usually used in prod) rotocols.
+   * @return A Path object.
+   */
+  def getPath(url: URL): Path = {
+    if (url.getProtocol == "file")
+      Paths.get(url.toURI)
+    else {
+      // This hacky branch is to handle reading resource files from a jar (where url is jar:...).
+      val strings = url.toString.split("!")
+      if (jarFS == null) {
+        jarFS = FileSystems.newFileSystem(URI.create(strings(0)), Map[String, String]().asJava)
+      }
+      jarFS.getPath(strings(1))
+    }
+  }
+
+  private def getResourceAsStream(resource: String) = {
+    val in = getContextClassLoader.getResourceAsStream(resource)
+    if (in == null) getClass.getResourceAsStream(resource)
+    else in
   }
 
   def writeMatchSummary(): Unit = {

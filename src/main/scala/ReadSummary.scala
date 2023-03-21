@@ -41,7 +41,12 @@ class ReadSummary(var url: String) {
 
 
   private def read_xml_file(): ClassSummary ={
-    val xml = XML.loadFile(url)
+    val parts = xml_url.split("/")
+    val result = parts.last
+
+    val xml_x = getClass().getResourceAsStream("xml-files/" + result)
+    println("test: " + xml_x)
+    val xml = XML.load(xml_x)
 
     //create a json structure, but with basic view (curly brackets and so on)
     val data = toJson(xml)
