@@ -1,16 +1,18 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, not}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatest.matchers.should.Matchers.not.be
 import play.api.libs.json._
 
+import java.io.File
 import java.nio.file._
 
 
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
-  val xml_urls_path = "./src/main/xml-files"
-  val projectJAR2 = "./src/main/jar-files/classes.jar"
+  val xml_urls_path = "./src/main/resources/xml-files"
+  val projectJAR2 = "./src/main/resources/jar-files/classes.jar"
   val object_to_test = new SearchForDependencies(xml_urls_path = xml_urls_path, jar_path = projectJAR2)
   object_to_test.execute()
   "Class with dependencies" can "have size more than 0" in {
@@ -34,13 +36,13 @@ class ExampleSpec extends AnyFlatSpec {
   it should "contain five cases where dependencies exist" in {
     val size_of_dependencies = object_to_test.get_classWithDependencies_map_size()
 
-    assert(size_of_dependencies == 5)
+    assert(size_of_dependencies == 7)
   }
 
   it should "contain five cases where summaries exist" in {
     val size_of_summaries = object_to_test.get_classWithMatchSummary_map_size()
 
-    assert(size_of_summaries == 5)
+    assert(size_of_summaries == 7)
   }
 
   it should "contain TestClassSummary in list of the summaries" in {
@@ -63,6 +65,9 @@ class ExampleSpec extends AnyFlatSpec {
     assert(object_to_test.classWithMatchSummary.contains("com.example.std_app.TestClassSummary5"))
   }
 
+  "The file of match summaries" must "contain a message class" in{
+    assert(object_to_test.classWithMatchSummary.contains("com.example.std_app.Message_m"))
+  }
 
 
 

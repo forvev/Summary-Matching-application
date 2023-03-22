@@ -165,10 +165,10 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 
   def writeMatchSummary(): Unit = {
     //If the file exists already, delete it
-    Files.deleteIfExists(Paths.get("./src/main/JSON/match_summaries.json"))
+    Files.deleteIfExists(Paths.get("./src/main/resources/JSON/match_summaries.json"))
 
     //create a new JSON file with the summaries
-    val path = Paths.get("./src/main/JSON/match_summaries.json")
+    val path = Paths.get("./src/main/resources/JSON/match_summaries.json")
     Files.createFile(path)
     var result = new StringBuilder("[ ")
     classWithMatchSummary.foreach(u => {
@@ -178,14 +178,14 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       result.append(json + ", \n")
     })
     result.replace(result.lastIndexOf(','), result.length - 1, " ]")
-    Files.write(Paths.get("./src/main/JSON/match_summaries.json"), result.toString().getBytes(), StandardOpenOption.APPEND)
+    Files.write(Paths.get("./src/main/resources/JSON/match_summaries.json"), result.toString().getBytes(), StandardOpenOption.APPEND)
 
   }
 
   def writeMatchDependenciesInJson(): Unit = {
     //----------creating a json file for XMLs------------
     // if the XML exists delete it
-    val path_json_with_dependencies = Paths.get("./src/main/JSON/match_dependencies.json")
+    val path_json_with_dependencies = Paths.get("./src/main/resources/JSON/match_dependencies.json")
     Files.deleteIfExists(path_json_with_dependencies)
 
     //create a new JSON file with the dependencies
