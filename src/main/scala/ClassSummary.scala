@@ -30,7 +30,6 @@ class ClassSummary(var className: String){
     })
     //println(length_summary_methods+" div by " + length_class_file_methods)
     match_probability = length_summary_methods.toFloat /length_class_file_methods.toFloat
-    println("class: "+classFile.fqn+" probability: "+match_probability)
     summary_methods.isEmpty
   }
 
