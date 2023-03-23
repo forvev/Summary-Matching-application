@@ -55,7 +55,7 @@ fullClasspath in Runtime += Attributed.blank(file("src/main/resources"))
 
 
 ThisBuild / assemblyMergeStrategy := {
-  case PathList("src","main","resources","xml-files", xs@_*) => MergeStrategy.concat
+  case PathList("src","main","resources", "summary-files", xs@_*) => MergeStrategy.concat
   case x if Assembly.isConfigFile(x) => MergeStrategy.concat
   case PathList(ps @ _*) if Assembly.isReadme(ps.last) || Assembly.isLicenseFile(ps.last) =>
     MergeStrategy.rename

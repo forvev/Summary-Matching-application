@@ -6,8 +6,6 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.{DefaultFormats, _}
 
 import java.nio.file.{Files, Paths, StandardOpenOption}
-import spray.json._
-
 
 class ReadSummary(var url: String) {
 
@@ -41,30 +39,14 @@ class ReadSummary(var url: String) {
 
 
   private def read_xml_file(): ClassSummary ={
-    val parts = url.split("/")
-    val result = parts.last
-
-    val xml_x = getClass().getResourceAsStream("xml-files/" + result)
-    println("test: " + xml_x)
-    val xml = XML.load(xml_x)
-
+    val xml = XML.load(url)
     //create a json structure, but with basic view (curly brackets and so on)
     val data = toJson(xml)
 
     //change the view to typical json view
     val data_2 = pretty(render(data))
     val json = data_2
-
-
-    val temp = (xml \\ "summary" \\ "methods " \ "method")
-
-
-    //save json to the file
-    val path_as_string = className + ".json"
-    val path = Paths.get(path_as_string)
-    Files.deleteIfExists(path)
-    Files.createFile(path)
-    Files.write(path, (json + "\n").getBytes(), StandardOpenOption.APPEND)
+    transform_xml_to_json(json)
     getClassSummaryWithXMLFile(xml, className)
   }
 
@@ -90,6 +72,21 @@ class ReadSummary(var url: String) {
     else {
       methodSummary.methodParameters = parameters_as_string.split(',')
       methodSummary.parametersLength = methodSummary.methodParameters.length
+    }
+  }
+
+  private def transform_xml_to_json(data: String): Unit = {
+    //save json to the file
+    val xml_as_json_path = "./src/main/resources/xml_as_json"
+    val dir_path = Paths.get(xml_as_json_path)
+    if (!Files.isDirectory(dir_path))
+      Files.createDirectory(dir_path)
+    else {
+      val path_as_string = className + ".json"
+      val path = Paths.get(xml_as_json_path, path_as_string)
+      Files.deleteIfExists(path)
+      Files.createFile(path)
+      Files.write(path, (data + "\n").getBytes(), StandardOpenOption.APPEND)
     }
   }
 

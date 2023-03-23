@@ -70,7 +70,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 //      println(path)
 //    })
 
-    val url = Main.getClass.getResource("/xml-files")
+    val url = Main.getClass.getResource("/summary-files")
     val path = getPath(url)
     val ls = Files.list(path)
 
