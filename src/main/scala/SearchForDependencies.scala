@@ -26,25 +26,43 @@ import scala.tools.nsc.Main
 
 
 class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
-  //val project = Project(new File(jar_path))
-  implicit val project = Project(
-    new java.io.File(jar_path), // path to the JAR files/directories containing the project
-    org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
-  )
+  val isJar = getClass.getResource("summary-files").toString.contains(".jar")
+
+  var project : Project[URL] = null
+
+
+
+  if(isJar){
+    val parts = jar_path.split("/")
+    val result = parts.last
+//    val url_resources = getClass().getResourceAsStream("/jar-files/" + result)
+//    //project = scala.io.Source.fromInputStream(url_resources)
+//    val xml_as_json_path = Main.getClass.getResource("/jar-files/"+result)
+//    val dir_path = Paths.get(xml_as_json_path.toURI) //getPath(xml_as_json_path)
+//    println("heree: "+dir_path)
+    val my_path = new File(".").getAbsolutePath.dropRight(1)
+    project = Project(new File(my_path+result))
+    //    println("my_path"+"/jar-files/" + result)
+//    project = Project(new File("/jar-files/" + result))
+
+  }
+  else{
+       project = Project(
+       new java.io.File(jar_path), // path to the JAR files/directories containing the project
+       org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
+     )
+  }
+
   //hashmap for dependencies
   var classWithDependencies: mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
   var classWithMatchSummary: mutable.Map[String, ClassMatchSummary] = mutable.HashMap()
   var classSummaries: mutable.HashSet[ClassSummary] = mutable.HashSet()
 
+
+
+
   def execute(): Unit = {
-    println("here 1")
-    val xml_urls_dir = FileSystems.getDefault.getPath(xml_urls_path)
-    println("here 2")
 
-
-    val xx = new File(".").getAbsolutePath
-
-    println("absolut: "+xx)
 //    val xml_folder_2 = getClass.getResource("xml-files")
 //    val resourcePath = Paths.get(URLDecoder.decode(xml_folder_2.getFile, "UTF-8")).toString.replace("!","")
 //
@@ -104,7 +122,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 //    Files.list(xml_urls_dir).forEach(path=>{
 //      println(path)
 //    })
-    println("here 4")
 
 
     //val xml_urls_dir = getClass().getClassLoader().getResourceAsStream(xml_urls_path)
@@ -121,7 +138,6 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 
 
     project.allProjectClassFiles.foreach(specific_class => {
-
       classSummaries.foreach(classSummary => {
         checkMatchSummary(classSummary, specific_class)
       })
@@ -144,7 +160,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
    * @param url The URL could follow the `file:` (usually used in dev) or `jar:` (usually used in prod) rotocols.
    * @return A Path object.
    */
-  def getPath(url: URL): Path = {
+   def getPath(url: URL): Path = {
     if (url.getProtocol == "file")
       Paths.get(url.toURI)
     else {
@@ -164,12 +180,23 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
 //  }
 
   def writeMatchSummary(): Unit = {
-    //If the file exists already, delete it
-    Files.deleteIfExists(Paths.get("./src/main/resources/JSON/match_summaries.json"))
+    var path_json_with_summaries: Path = null
+    if (isJar) {
+      val my_path = new File(".").getAbsolutePath.dropRight(1)
+      val generatedFile = new File(my_path, "match_summaries.json")
+      generatedFile.createNewFile();
+      path_json_with_summaries = generatedFile.toPath
+    }
+    else {
+      //If the file exists already, delete it
+      Files.deleteIfExists(Paths.get("./src/main/resources/JSON/match_summaries.json"))
 
-    //create a new JSON file with the summaries
-    val path = Paths.get("./src/main/resources/JSON/match_summaries.json")
-    Files.createFile(path)
+      //create a new JSON file with the summaries
+      val path = Paths.get("./src/main/resources/JSON/match_summaries.json")
+      Files.createFile(path)
+      path_json_with_summaries = Paths.get("./src/main/resources/JSON/match_summaries.json")
+    }
+
     var result = new StringBuilder("[ ")
     classWithMatchSummary.foreach(u => {
       var match_summaries = u._2.matchesSummariestoJson()
@@ -178,15 +205,25 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       result.append(json + ", \n")
     })
     result.replace(result.lastIndexOf(','), result.length - 1, " ]")
-    Files.write(Paths.get("./src/main/resources/JSON/match_summaries.json"), result.toString().getBytes(), StandardOpenOption.APPEND)
+    Files.write(path_json_with_summaries, result.toString().getBytes(), StandardOpenOption.WRITE)
 
   }
 
   def writeMatchDependenciesInJson(): Unit = {
-    //----------creating a json file for XMLs------------
-    // if the XML exists delete it
-    val path_json_with_dependencies = Paths.get("./src/main/resources/JSON/match_dependencies.json")
-    Files.deleteIfExists(path_json_with_dependencies)
+
+    var path_json_with_dependencies: Path = null
+    if (isJar) {
+      val my_path = new File(".").getAbsolutePath.dropRight(1)
+      val generatedFile = new File(my_path, "match_dependencies.json")
+      generatedFile.createNewFile();
+      path_json_with_dependencies =generatedFile.toPath
+    }
+    else {
+      //----------creating a json file for XMLs------------
+      // if the XML exists delete it
+      path_json_with_dependencies = Paths.get("./src/main/resources/JSON/match_dependencies.json")
+      Files.deleteIfExists(path_json_with_dependencies)
+    }
 
     //create a new JSON file with the dependencies
     var result = new StringBuilder("[ ")
@@ -205,7 +242,7 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       result.append(json + ", \n")
     })
     result.replace(result.lastIndexOf(','), result.length - 1, " ]")
-    Files.write(path_json_with_dependencies, result.toString.getBytes())
+    Files.write(path_json_with_dependencies, result.toString.getBytes(), StandardOpenOption.WRITE)
   }
 
 

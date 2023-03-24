@@ -28,7 +28,6 @@ class ClassSummary(var className: String){
       if (after_filter.nonEmpty)
         summary_methods -= after_filter.head
     })
-    //println(length_summary_methods+" div by " + length_class_file_methods)
     match_probability = length_summary_methods.toFloat /length_class_file_methods.toFloat
     summary_methods.isEmpty
   }
