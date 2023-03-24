@@ -16,7 +16,7 @@ import scala.reflect.internal.util.FileUtils
 import scala.reflect.runtime.universe.{runtimeMirror, typeOf}
 import scala.tools.jline_embedded.internal.InputStreamReader
 import scala.xml.XML
-import scala.xml.XML.encoding
+import java.io.File
 import java.nio.file._
 import scala.collection.JavaConverters._
 import java.net.{URI, URL}
@@ -25,117 +25,26 @@ import scala.tools.nsc.Main
 
 
 
-class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
-  val isJar = getClass.getResource("summary-files").toString.contains(".jar")
-
-  var project : Project[URL] = null
-
-
-
-  if(isJar){
-    val parts = jar_path.split("/")
-    val result = parts.last
-//    val url_resources = getClass().getResourceAsStream("/jar-files/" + result)
-//    //project = scala.io.Source.fromInputStream(url_resources)
-//    val xml_as_json_path = Main.getClass.getResource("/jar-files/"+result)
-//    val dir_path = Paths.get(xml_as_json_path.toURI) //getPath(xml_as_json_path)
-//    println("heree: "+dir_path)
-    val my_path = new File(".").getAbsolutePath.dropRight(1)
-    project = Project(new File(my_path+result))
-    //    println("my_path"+"/jar-files/" + result)
-//    project = Project(new File("/jar-files/" + result))
-
-  }
-  else{
-       project = Project(
-       new java.io.File(jar_path), // path to the JAR files/directories containing the project
-       org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
-     )
-  }
-
+class SearchForDependencies(var jar_path: String, var summaries_path: String, var output_path: String) {
+  implicit val project = Project(
+    new File(jar_path), // path to the JAR files/directories containing the project
+    org.opalj.bytecode.RTJar // predefined path(s) to the used libraries
+  )
   //hashmap for dependencies
   var classWithDependencies: mutable.Map[String, mutable.HashSet[String]] = mutable.HashMap()
   var classWithMatchSummary: mutable.Map[String, ClassMatchSummary] = mutable.HashMap()
   var classSummaries: mutable.HashSet[ClassSummary] = mutable.HashSet()
 
-
-
-
   def execute(): Unit = {
-
-//    val xml_folder_2 = getClass.getResource("xml-files")
-//    val resourcePath = Paths.get(URLDecoder.decode(xml_folder_2.getFile, "UTF-8")).toString.replace("!","")
-//
-//    println("path::: "+xml_folder_2)
-//    //val xml_folder = Paths.get(xml_folder_2.getPath)
-//    val dir_path = new File(resourcePath).listFiles.map(_.getPath)
-//    println("path: "+dir_path)
-//    println("new path:")
-//    dir_path.foreach(d=>{
-//      println(d)
-//    })
-
-//    val dir_url = ClassLoader.getSystemResource("xml-files")
-//    println("location: "+dir_url.toURI)
-//    val dir = new File(dir_url.toURI).listFiles.map(_.getPath)
-
-//    val classLoader = getClass.getClassLoader
-//    val resourceUrl = classLoader.getResource("xml-files")
-//    println("location: "+resourceUrl.toURI)
-//    val dir = new File(resourceUrl.toURI).listFiles.map(_.getPath)
-//
-//    dir.foreach(path=>{
-//      println(path)
-//    })
-
-    val url = Main.getClass.getResource("/summary-files")
-    val path = getPath(url)
+    val path = Paths.get(summaries_path)
+    val summaries_as_json_path = Paths.get(output_path, "xml_as_json")
     val ls = Files.list(path)
 
     ls.forEach(path=>{
-      val readSummary = new ReadSummary(path.toString)
+      val readSummary = new ReadSummary(path.toString, summaries_as_json_path)
       val classSummary = readSummary.get_classSummary()
       classSummaries.add(classSummary)
     })
-
-
-
-    //    Files.list(dir_path).forEach(path=>{
-//      println(path)
-//    })
-
-
-   // val xml_urls_dir_2 = FileSystems.getDefault.getPath(dir_path.toString)
-
-    //println("d: "+xml_urls_dir_2)
-
-
-//    val directory = Paths.get(xml_folder_2).toString
-//    val xml_folder = new File(directory)
-
-//    println("here 3: "+xml_folder.listFiles().toList)
-//
-//    xml_folder.listFiles().foreach(path=>{
-//      println("path: "+path)
-//    })
-
-//    Files.list(xml_urls_dir).forEach(path=>{
-//      println(path)
-//    })
-
-
-    //val xml_urls_dir = getClass().getClassLoader().getResourceAsStream(xml_urls_path)
-
-    //read every summary inside the files and search for match summaries
-//    Files.list(xml_urls_dir).forEach(path => {
-//      println("path: "+path)
-//      val readSummary = new ReadSummary(path.toString)
-//      val classSummary = readSummary.getClassSummary()
-//      classSummaries.add(classSummary)
-//
-//    })
-
-
 
     project.allProjectClassFiles.foreach(specific_class => {
       classSummaries.foreach(classSummary => {
@@ -147,56 +56,15 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
     writeMatchSummary()
   }
 
-  // Helper for reading an individual file.
-  def readFile(path: Path): String =
-    Source.fromInputStream(Files.newInputStream(path), "UTF-8").getLines.mkString("\n")
 
-
-  private var jarFS: FileSystem = null; // Static variable for storing a FileSystem. Will be loaded on the first call to getPath.
-
-  /**
-   * Gets a Path object corresponding to an URL.
-   *
-   * @param url The URL could follow the `file:` (usually used in dev) or `jar:` (usually used in prod) rotocols.
-   * @return A Path object.
-   */
-   def getPath(url: URL): Path = {
-    if (url.getProtocol == "file")
-      Paths.get(url.toURI)
-    else {
-      // This hacky branch is to handle reading resource files from a jar (where url is jar:...).
-      val strings = url.toString.split("!")
-      if (jarFS == null) {
-        jarFS = FileSystems.newFileSystem(URI.create(strings(0)), Map[String, String]().asJava)
-      }
-      jarFS.getPath(strings(1))
-    }
-  }
-
-//  private def getResourceAsStream(resource: String) = {
-//    val in = getContextClassLoader.getResourceAsStream(resource)
-//    if (in == null) getClass.getResourceAsStream(resource)
-//    else in
-//  }
 
   def writeMatchSummary(): Unit = {
-    var path_json_with_summaries: Path = null
-    if (isJar) {
-      val my_path = new File(".").getAbsolutePath.dropRight(1)
-      val generatedFile = new File(my_path, "match_summaries.json")
-      generatedFile.createNewFile();
-      path_json_with_summaries = generatedFile.toPath
-    }
-    else {
-      //If the file exists already, delete it
-      Files.deleteIfExists(Paths.get("./src/main/resources/JSON/match_summaries.json"))
+    //If the file exists already, delete it
+    val path = Paths.get(output_path,"match_summaries.json")
+    Files.deleteIfExists(path)
 
-      //create a new JSON file with the summaries
-      val path = Paths.get("./src/main/resources/JSON/match_summaries.json")
-      Files.createFile(path)
-      path_json_with_summaries = Paths.get("./src/main/resources/JSON/match_summaries.json")
-    }
-
+    //create a new JSON file with the summaries
+    Files.createFile(path)
     var result = new StringBuilder("[ ")
     classWithMatchSummary.foreach(u => {
       var match_summaries = u._2.matchesSummariestoJson()
@@ -205,25 +73,15 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       result.append(json + ", \n")
     })
     result.replace(result.lastIndexOf(','), result.length - 1, " ]")
-    Files.write(path_json_with_summaries, result.toString().getBytes(), StandardOpenOption.WRITE)
+    Files.write(path, result.toString().getBytes(), StandardOpenOption.APPEND)
 
   }
 
   def writeMatchDependenciesInJson(): Unit = {
-
-    var path_json_with_dependencies: Path = null
-    if (isJar) {
-      val my_path = new File(".").getAbsolutePath.dropRight(1)
-      val generatedFile = new File(my_path, "match_dependencies.json")
-      generatedFile.createNewFile();
-      path_json_with_dependencies =generatedFile.toPath
-    }
-    else {
-      //----------creating a json file for XMLs------------
-      // if the XML exists delete it
-      path_json_with_dependencies = Paths.get("./src/main/resources/JSON/match_dependencies.json")
-      Files.deleteIfExists(path_json_with_dependencies)
-    }
+    //----------creating a json file for XMLs------------
+    // if the XML exists delete it
+    val path_json_with_dependencies = Paths.get(output_path,"match_dependencies.json")
+    Files.deleteIfExists(path_json_with_dependencies)
 
     //create a new JSON file with the dependencies
     var result = new StringBuilder("[ ")
@@ -242,14 +100,13 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
       result.append(json + ", \n")
     })
     result.replace(result.lastIndexOf(','), result.length - 1, " ]")
-    Files.write(path_json_with_dependencies, result.toString.getBytes(), StandardOpenOption.WRITE)
+    Files.write(path_json_with_dependencies, result.toString.getBytes())
   }
 
 
   def checkMatchSummary(classSummary: ClassSummary, classFile: ClassFile): Unit = {
     //go through all of the classes in the project
     if (classSummary.isMatched(classFile)) {
-      println("Pattern has been found!\nWith class: " + classFile.methods)
       val className = classFile.fqn.replace("/", ".")
       classWithDependencies += (className -> getCalledClasses(classFile))
       var classMatchSummary = new ClassMatchSummary(className)
@@ -301,14 +158,12 @@ class SearchForDependencies(var xml_urls_path: String, var jar_path: String) {
   }
 
   def checkRelationOfSummary(): Unit = {
-    println("----------------------------------------------")
     classWithMatchSummary.foreach(summary => {
       classWithDependencies.foreach(dependencies => {
         if (!summary._2.className.equals(dependencies._1)) {
           dependencies._2.foreach(className => {
             if (className.equals(summary._1)) {
               classWithMatchSummary(dependencies._1).addClassIsCalledByThisClass(summary._2)
-              println("class " + dependencies._1 + " calls the class " + summary)
             }
           })
         }

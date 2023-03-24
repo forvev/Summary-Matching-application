@@ -1,19 +1,11 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, not}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import org.scalatest.matchers.should.Matchers.not.be
-import play.api.libs.json._
-
-import java.io.File
-import java.nio.file._
-
 
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
-  val xml_urls_path = "./src/main/resources/summary-files"
-  val projectJAR2 = "./src/main/resources/jar-files/classes.jar"
-  val object_to_test = new SearchForDependencies(xml_urls_path = xml_urls_path, jar_path = projectJAR2)
+  val summaries_path = "./src/main/resources/summary-files"
+  val jar_path = "./src/main/resources/jar-files/classes.jar"
+  val out_put = "./src/main/resources/output"
+  val object_to_test = new SearchForDependencies(jar_path = jar_path, summaries_path = summaries_path, output_path = out_put)
   object_to_test.execute()
   "Class with dependencies" can "have size more than 0" in {
     assert(object_to_test.classWithDependencies.empty != 0)
@@ -24,7 +16,7 @@ class ExampleSpec extends AnyFlatSpec {
   }
 
   "The jar file " must "be included!" in{
-    assert(object_to_test.jar_path == projectJAR2)
+    assert(object_to_test.jar_path == jar_path)
   }
 
   "inside classWithMatchSummary" must "class ... must be included" in {
