@@ -1,5 +1,4 @@
 **To run the application**
-
 1. Download the jar file from the latest release
 2. Run the command:
 
@@ -12,7 +11,6 @@ As an output, you should get a folder "xml_as_json" and two files (match depende
 
 
 **To run the docker**
-
 Once you have downloaded the project you will find there the Dockerfile file. Inside the same directory run this command to build an image:
  
  **sudo docker build .**
@@ -24,7 +22,6 @@ it will create an image that you can run in the following way:
 
 
 **Working of the application**
-
 Once the files are passed to the application, it carries out the analysis process. If the summary files are represented in XML notation they will be translated into the JSON representation.
 After that the application checks if the summaries match the classes inside the android application. If all of the methods are included inside the specific class in the android application it means that there is a match between the summary and the class.
 Once we have a list of matched summaries the program checks the dependencies between them. If a class A with a matched summary implements a class B with a matched summary too, it means that there is a dependency between them. More nested cases are also considered. Therefore, if there is a class C with a matched summary, and this class implements a class A it means that there is a dependency between B and C.
