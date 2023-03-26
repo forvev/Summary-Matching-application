@@ -2,6 +2,11 @@ import org.opalj.br._
 
 import scala.collection.mutable.ListBuffer
 
+/**
+ *
+ * @Authors: Tam
+ */
+
 class MethodOfSummary(var className: String, var method_string: String) {
   var methodParameters: Array[String] = _
   var parametersLength: Int = _

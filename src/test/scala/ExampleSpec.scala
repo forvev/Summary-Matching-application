@@ -1,5 +1,10 @@
 import org.scalatest.flatspec.AnyFlatSpec
 
+/**
+ *
+ * @Authors: Artur
+ */
+
 class ExampleSpec extends AnyFlatSpec {
   //With this input I expect this output...
   val summaries_path = "./src/main/resources/summary-files"

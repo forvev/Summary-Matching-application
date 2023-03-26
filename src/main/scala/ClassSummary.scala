@@ -2,6 +2,10 @@ import org.opalj.br._
 
 import scala.collection.mutable.ListBuffer
 
+/**
+ *
+ * @Authors: Tam
+ */
 
 class ClassSummary(var className: String){
   private var methods : ListBuffer[MethodOfSummary] = _

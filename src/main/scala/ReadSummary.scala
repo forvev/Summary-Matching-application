@@ -7,6 +7,11 @@ import org.json4s.{DefaultFormats, _}
 
 import java.nio.file.{Files, Paths, StandardOpenOption, Path}
 
+/**
+ *
+ * @Authors: Artur, Tam
+ */
+
 class ReadSummary(var summary_url: String, var output_url: Path) {
 
   val className = summary_url.substring(summary_url.lastIndexOf('\\')+1, summary_url.lastIndexOf('.'))
@@ -80,8 +85,11 @@ class ReadSummary(var summary_url: String, var output_url: Path) {
     if (!Files.isDirectory(output_url))
       Files.createDirectory(output_url)
     else {
-      val path_as_string = className + ".json"
+      val parts = className.split("/")
+      val result = parts.last
+      val path_as_string = result + ".json"
       val path = Paths.get(output_url.toString, path_as_string)
+
       Files.deleteIfExists(path)
       Files.createFile(path)
       Files.write(path, (data + "\n").getBytes(), StandardOpenOption.APPEND)

@@ -3,6 +3,10 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.collection.mutable
 
+/**
+ *
+ * @Authors: Artur, Tam
+ */
 
 class ClassMatchSummary(var className: String) {
 

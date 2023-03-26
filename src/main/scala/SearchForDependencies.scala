@@ -23,7 +23,10 @@ import java.net.{URI, URL}
 import java.util.stream._
 import scala.tools.nsc.Main
 
-
+/**
+ *
+ * @Authors: Artur, Tam
+ */
 
 class SearchForDependencies(var jar_path: String, var summaries_path: String, var output_path: String) {
   implicit val project = Project(

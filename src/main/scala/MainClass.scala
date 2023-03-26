@@ -1,5 +1,10 @@
 import java.nio.file.Paths
 
+/**
+ *
+ * @Authors: Artur, Tam
+ */
+
 object MainClass {
   def main(args: Array[String]): Unit = {
 
