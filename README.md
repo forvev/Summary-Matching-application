@@ -2,7 +2,8 @@
 
 1. Download the jar file from the latest release
 2. Run the command:
-  \n**java -jar downloaded_jar.jar -i jar_of_the_android_app.jar -s summaries_folder -o output_folder**
+
+  **java -jar downloaded_jar.jar -i jar_of_the_android_app.jar -s summaries_folder -o output_folder**
   
 If all of the files are in the same directory there is no need to add the absolute path. Otherwise, it is mandatory.
 
