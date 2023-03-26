@@ -9,6 +9,20 @@ If all of the files are in the same directory there is no need to add the absolu
 
 As an output, you should get a folder "xml_as_json" and two files (match dependencies and match summaries).
 
+
+
+**To run the docker**
+
+Once you have downloaded the project you will find there the Dockerfile file. Inside the same directory run this command to build an image:
+ 
+ **sudo docker build .**
+ 
+it will create an image that you can run in the following way:
+
+  **docker run image_id -i jar_of_the_android_app.jar -s summaries_folder -o output_folder**
+
+
+
 **Working of the application**
 
 Once the files are passed to the application, it carries out the analysis process. If the summary files are represented in XML notation they will be translated into the JSON representation.
