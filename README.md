@@ -1,3 +1,4 @@
+---------------------------------------------------
 **To run the application**
 1. Download the jar file from the latest release
 2. Run the command:
@@ -9,7 +10,7 @@ If all of the files are in the same directory there is no need to add the absolu
 As an output, you should get a folder "xml_as_json" and two files (match dependencies and match summaries).
 
 
-
+---------------------------------------------------
 **To run the docker**
 
 Once you have downloaded the project you will find there the Dockerfile file. Inside the same directory run this command to build an image:
@@ -19,10 +20,11 @@ Once you have downloaded the project you will find there the Dockerfile file. In
 It will create an image that you can run in the following way:
 
   **sudo docker run -v /home/user/my_folder:/files -it my_image -i /files/classes.jar -s /files/summary -o /files/output**
-  where inside the folder "my_folder" classes.jar, summary and output folders are stored (they will be moved to the path "/files" inside the container).
+  
+  Where inside the folder "my_folder" classes.jar, summary and output folders are stored (they will be moved to the path "/files" inside the container).
 
 
-
+---------------------------------------------------
 **Working of the application**
 
 Once the files are passed to the application, it carries out the analysis process. If the summary files are represented in XML notation they will be translated into the JSON representation.
