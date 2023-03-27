@@ -16,9 +16,10 @@ Once you have downloaded the project you will find there the Dockerfile file. In
  
  **sudo docker build .**
  
-it will create an image that you can run in the following way:
+It will create an image that you can run in the following way:
 
-  **docker run image_id -i jar_of_the_android_app.jar -s summaries_folder -o output_folder**
+  **sudo docker run -v /home/user/my_folder:/files -it my_image -i /files/classes.jar -s /files/summary -o /files/output**
+  where inside the folder "my_folder" classes.jar, summary and output folders are stored (they will be moved to the path "/files" inside the container).
 
 
 
