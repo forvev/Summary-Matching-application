@@ -19,9 +19,9 @@ Once you have downloaded the project you will find there the Dockerfile file. In
  
 It will create an image that you can run in the following way:
 
-  **sudo docker run -v /home/user/my_folder:/files -it my_image -i /files/classes.jar -s /files/summary -o /files/output**
+  **sudo docker run --rm -v /path_where_you want_to_store_output/summary-matching:/output -it your_image -i /usr/cpa/src/main/resources/jar-files/classes.jar -s /usr/cpa/src/main/resources/summary-files -o /output**
   
-  Where inside the folder "my_folder" classes.jar, summary and output folders are stored (they will be moved to the path "/files" inside the container).
+  The result will be stored inside the summary-matching folder. In order to change paths you would need to change the Dockerfile.
 
 
 ---------------------------------------------------
